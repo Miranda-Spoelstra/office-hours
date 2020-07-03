@@ -1,0 +1,7 @@
+{
+  "name": "office-hours",
+  "short_name": "office-hours",
+  "description": "overview of office hours obtained from google api",
+  "start_url": "/",
+  "display": "standalone"
+}
