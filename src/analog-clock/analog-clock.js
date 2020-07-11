@@ -25,10 +25,10 @@ class AnalogClock extends PolymerElement {
           position: relative;
         }
 
+        /* Stacks all containers on top of the clock and each other */
         #hours_box,
         #minutes_box,
         #seconds_box {
-          /* Stacks all containers on top of the clock and each other */
           position: absolute;
           top: 0;
           right: 0;
@@ -97,11 +97,13 @@ class AnalogClock extends PolymerElement {
     return {};
   }
 
+  // function called when element is first attached to the document
   ready() {
     super.ready();
     this._currentTime();
   }
 
+  // get the current time
   _currentTime() {
     const now = new Date();
     const hoursNow = now.getHours();

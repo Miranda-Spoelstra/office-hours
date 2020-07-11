@@ -11,36 +11,38 @@ class DigitalClock extends PolymerElement {
         :host {
           display: block;
         }
-        #time_digital {
+        #time_display {
           margin: 0;
         }
       </style>
 
-      <p id="time_digital"></p>
+      <p id="time_display"></p>
     `;
   }
   static get properties() {
     return {};
   }
 
+  // function called when element is first attached to the document
   ready() {
     super.ready();
     this._currentTime();
   }
 
+  // get the current time
   _currentTime() {
     const now = new Date();
     const hoursNow = this._formatTime(now.getHours());
     const minutesNow = this._formatTime(now.getMinutes());
     const secondsNow = this._formatTime(now.getSeconds());
 
-    this.$.time_digital.innerHTML = `${hoursNow}:${minutesNow}:${secondsNow}`;
+    this.$.time_display.innerHTML = `${hoursNow}:${minutesNow}:${secondsNow}`;
     setTimeout(this._currentTime.bind(this), 1000);
   }
 
-  // add a 0 before the number if less than 10
+  // format number to always be at least 2 numbers
   _formatTime(n) {
-    return (n < 10) ? `0${n}` : n;
+    return n < 10 ? `0${n}` : n;
   }
 }
 
