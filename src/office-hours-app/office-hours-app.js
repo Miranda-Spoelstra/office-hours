@@ -16,8 +16,8 @@ class OfficeHoursApp extends PolymerElement {
           /* standard styles */
           --font-family: Verdana, sans-serif;
           --time-text-color: #eee;
-          --page-background: #eee;
           --time-background: url("./src/images/blue_bg.jpg");
+          --page-background: #eee;
 
           display: block;
           background: var(--page-background);
@@ -51,7 +51,7 @@ class OfficeHoursApp extends PolymerElement {
         }
 
         /* styling of the opening hours section */
-        #opening_hours {
+        #office_hours {
           margin: 5%;
           text-align: center;
         }
@@ -66,7 +66,7 @@ class OfficeHoursApp extends PolymerElement {
         td {
           padding: 1% 0;
         }
-        #opening_hours tr > td:last-child {
+        #office_hours tr > td:last-child {
           text-align: right;
         }
 
@@ -96,6 +96,7 @@ class OfficeHoursApp extends PolymerElement {
           --time-text-color: pink;
         }
 
+        /* fade in animations of clocks */
         @keyframes fadeInOpacity {
           0% {
             opacity: 0;
@@ -131,6 +132,7 @@ class OfficeHoursApp extends PolymerElement {
         }
       </style>
 
+      <!-- the different clocks that switch on a timer -->
       <section id="time_section" class$="{{timeSectionTheme}}">
         <div id="time_box" class="fade-in">
           <template is="dom-if" if="{{analog}}">
@@ -145,17 +147,18 @@ class OfficeHoursApp extends PolymerElement {
         </div>
       </section>
 
-      <section id="opening_hours">
-        <h1>Atom Rotterdam - Openingstijden</h1>
+      <!-- office hours  -->
+      <section id="office_hours">
+        <h1>Office hours</h1>
         <p>[[status]]</p>
 
         <!-- note: table outside the template doesn't work, a known polymer issue -->
-        <dom-repeat items="[[openingHours]]" as="day">
+        <dom-repeat items="[[officeHours]]" as="day">
           <template>
             <table>
               <tr>
                 <td>[[day.name]]</td>
-                <td>[[day.open]] - [[day.close]]</td>
+                <td>[[displayHours(day)]]</td>
               </tr>
             </table>
           </template>
@@ -166,29 +169,34 @@ class OfficeHoursApp extends PolymerElement {
 
   static get properties() {
     return {
-      timeSectionTheme: {
-        type: String,
-        value: "",
-      },
       analog: {
         type: Boolean,
         value: true,
-      },
-      analogClockTheme: {
-        type: String,
-        value: "",
       },
       status: {
         type: String,
         value: "",
       },
-      openingHours: {
+      officeHours: {
         type: Array,
         computed: "_fillOpeningHours()",
+      },
+      analogClockTheme: {
+        type: String,
+        value: "",
+      },
+      timeSectionTheme: {
+        type: String,
+        value: "",
       },
     };
   }
 
+  displayHours(day) {
+    return day.open === "" ? `Closed` : `${day.open} - ${day.close}`;
+  }
+
+  // function called when element is first attached to the document
   ready() {
     super.ready();
     this._switchInterval();
@@ -199,46 +207,38 @@ class OfficeHoursApp extends PolymerElement {
   }
   _switchClock() {
     // TODO: finish  animation
-
     // this.$.time_box.classList.remove('fade-in');
     // this.$.time_box.classList.add('fade-out');
-
     this.analog = !this.analog;
-    this.$.time_box.classList.add("fade-in");
-
-    // this.timeSectionTheme = "time_section_theme_a";
   }
   _checkStatus() {
-    const open = parseInt(this.openingHours[0].open);
-    const close = parseInt(this.openingHours[0].close);
-    const day = this.openingHours[0].name;
+    const open = parseInt(this.officeHours[0].open);
+    const close = parseInt(this.officeHours[0].close);
+    const day = this.officeHours[0].name;
     const now = new Date().getHours();
-    // const now = 16;
 
-    if (day === "Zaterdag" || day === "Zondag") {
-      this.status = "Gesloten";
+    if (day === "") {
+      this.status = "Closed";
     } else if (now >= open - 1 && now < open) {
-      this.status = "Bijna open";
+      this.status = "Opens soon";
     } else if (now >= close - 1 && now < close) {
-      this.status = "Sluit bijna";
+      this.status = "Closes soon";
     } else if (now >= open && now < close) {
       this.status = "Open";
     } else {
-      this.status = "Gesloten";
+      this.status = "Closed";
     }
   }
   _fillOpeningHours() {
-    // TODO: get data
-
-    // output as array
+    // data can come from an API
     return [
-      { name: "Donderdag", open: "9:00", close: "17:00" },
-      { name: "Vrijdag", open: "9:00", close: "17:00" },
-      { name: "Zaterdag", open: "Gesloten", close: "" },
-      { name: "Zondag", open: "Gesloten", close: "" },
-      { name: "Maandag", open: "9:00", close: "17:00" },
-      { name: "Dinsdag", open: "9:00", close: "17:00" },
-      { name: "Woensdag", open: "9:00", close: "17:00" },
+      { name: "Sunday", open: "", close: "" },
+      { name: "Monday", open: "9:00", close: "17:00" },
+      { name: "Tuesday", open: "9:00", close: "17:00" },
+      { name: "Wednesday", open: "9:00", close: "17:00" },
+      { name: "Thursday", open: "9:00", close: "17:00" },
+      { name: "Friday", open: "9:00", close: "17:00" },
+      { name: "Saturday", open: "", close: "" },
     ];
   }
 }
